@@ -117,7 +117,7 @@ button, input, textarea, select {
    TYPOGRAPHY
    ========================================================================== */
 h1, h2, h3, h4, h5, h6 {
-  font-weight: 700;
+  font-weight: 400;
   line-height: 1.25;
   color: var(--blackgreen);
 }
@@ -1677,5 +1677,129 @@ textarea.form-input {
   
   .faq-content-inner {
     padding: 0 1.5rem 1.5rem 1.5rem;
+  }
+}
+
+/* ==========================================================================
+   SPHERES OF SERVICE (Gallery Grid)
+   ========================================================================== */
+.spheres-section {
+  padding: 6.5rem 0;
+  position: relative;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.gallery-card {
+  position: relative;
+  height: 540px;
+  border-radius: var(--biofarma-rounded);
+  overflow: hidden;
+  box-shadow: var(--shadow-medium);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.gallery-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-glow);
+}
+
+.gallery-card-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gallery-card:hover .gallery-card-img {
+  transform: scale(1.06);
+}
+
+.gallery-card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, rgba(1, 55, 61, 0.85) 0%, rgba(1, 55, 61, 0.3) 40%, rgba(1, 55, 61, 0) 70%);
+  transition: var(--transition-smooth);
+}
+
+.gallery-card:hover .gallery-card-overlay {
+  background: linear-gradient(to top, rgba(224, 90, 22, 0.8) 0%, rgba(1, 55, 61, 0.35) 50%, rgba(1, 55, 61, 0) 70%);
+}
+
+.gallery-card-icon {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  z-index: 10;
+  transition: var(--transition-smooth);
+}
+
+.gallery-card:hover .gallery-card-icon {
+  background: var(--white);
+  color: var(--original);
+  transform: scale(1.1);
+}
+
+.gallery-card-icon svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+}
+
+.gallery-card-title {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 2.5rem;
+  right: 2.5rem;
+  color: var(--white);
+  font-size: 1.85rem;
+  font-weight: 400;
+  z-index: 10;
+  transition: var(--transition-smooth);
+}
+
+.gallery-card:hover .gallery-card-title {
+  transform: translateY(-5px);
+}
+
+/* Responsive adjustments for gallery */
+@media (max-width: 991px) {
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .gallery-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .gallery-card {
+    height: 480px;
   }
 }
