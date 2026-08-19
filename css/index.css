@@ -443,8 +443,6 @@ p {
   font-style: italic;
   font-weight: 500;
   color: var(--blackgreen-80);
-  border-left: 3px solid var(--original);
-  padding-left: 1.5rem;
   margin-bottom: 2rem;
 }
 
@@ -797,7 +795,6 @@ p {
   background: var(--white);
   border-radius: var(--rounded-sm);
   padding: 1.75rem 2rem;
-  border-left: 4px solid var(--original);
   box-shadow: var(--shadow-subtle);
 }
 
