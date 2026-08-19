@@ -183,18 +183,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const tag = 'ecgm-gallery';
 
     try {
-      const [imagesRes, videosRes] = await Promise.all([
+      const responses = await Promise.all([
         fetch(`https://res.cloudinary.com/${cloudName}/image/list/${tag}.json`),
         fetch(`https://res.cloudinary.com/${cloudName}/video/list/${tag}.json`)
       ]);
 
-      const images = imagesRes.ok ? (await imagesRes.json()).resources : [];
-      const videos = videosRes.ok ? (await videosRes.json()).resources : [];
+      const imagesData = responses[0].ok ? await responses[0].json() : { resources: [] };
+      const videosData = responses[1].ok ? await responses[1].json() : { resources: [] };
+
+      const images = imagesData.resources || [];
+      const videos = videosData.resources || [];
 
       renderGallery([...images.map(i => ({...i, type: 'image'})), ...videos.map(v => ({...v, type: 'video'}))]);
     } catch (err) {
       console.error('Error fetching from Cloudinary:', err);
-      galleryGrid.innerHTML = `<p>Media gallery temporarily unavailable. Please check back soon.</p>`;
+      galleryGrid.innerHTML = `<p>Media gallery temporarily unavailable.</p>`;
     }
   };
 
