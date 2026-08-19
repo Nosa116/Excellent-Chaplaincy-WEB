@@ -1118,12 +1118,17 @@ p {
 .contact-method-details p {
   font-size: 1.05rem;
   color: var(--blackgreen-80);
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .contact-method-details a {
   font-size: 1.05rem;
   font-weight: 700;
   color: var(--blackgreen);
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-all;
 }
 
 .contact-method-details a:hover {
@@ -1328,6 +1333,9 @@ textarea.form-input {
   font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.7);
   line-height: 1.5;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-all;
 }
 
 .footer-contact-details a:hover {
