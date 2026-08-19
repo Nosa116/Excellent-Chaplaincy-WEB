@@ -43,6 +43,7 @@
         <li><a href="#hero" class="nav-link active">Home</a></li>
         <li><a href="#about" class="nav-link">About Us</a></li>
         <li><a href="#missions" class="nav-link">Our Missions</a></li>
+        <li><a href="#gallery" class="nav-link">Media Gallery</a></li>
         <li><a href="#membership" class="nav-link">Membership</a></li>
         <li><a href="#faq" class="nav-link">FAQs</a></li>
         <li><a href="#contact" class="nav-link">Contact</a></li>
@@ -229,6 +230,46 @@
             </svg>
           </div>
           <h3 class="gallery-card-title">Community & Corporate</h3>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       MEDIA GALLERY (Cloudinary Dynamic Section)
+       ========================================================================== -->
+  <section id="gallery" class="media-gallery-section">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <span class="section-subtitle">Media Archives</span>
+        <h2 class="section-title">Excellent Chaplaincy Gallery</h2>
+        <p class="section-desc">Explore photographs and videos highlighting our global voluntary operations, chaplaincy training, deployments, and community care services.</p>
+      </div>
+
+      <!-- Cloudinary Status & Filter Row -->
+      <div class="gallery-controls animate-on-scroll delay-1">
+        <div class="gallery-tabs">
+          <button class="gallery-tab active" data-filter="all">
+            <span>All Media</span>
+          </button>
+          <button class="gallery-tab" data-filter="image">
+            <span>Photos</span>
+          </button>
+          <button class="gallery-tab" data-filter="video">
+            <span>Videos</span>
+          </button>
+        </div>
+        <div class="cloudinary-status-badge">
+          <span class="status-indicator"></span>
+          <span>Cloudinary Feed</span>
+        </div>
+      </div>
+
+      <!-- Dynamic Grid Container -->
+      <div id="cloudinary-gallery-grid" class="media-gallery-grid animate-on-scroll delay-2">
+        <div class="gallery-loader">
+          <div class="spinner"></div>
+          <p>Connecting to Cloudinary Media Vault...</p>
         </div>
       </div>
     </div>
