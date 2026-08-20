@@ -168,25 +168,113 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================================================
-  // 7. DYNAMIC CLOUDINARY MEDIA GALLERY (Product Gallery Widget)
+  // 7. DYNAMIC CLOUDINARY MEDIA GALLERY (Static JSON + Custom Lightbox)
   // ==========================================================================
-  // Load Cloudinary Widget script
-  const script = document.createElement('script');
-  script.src = "https://product-gallery.cloudinary.com/all.js";
-  script.async = true;
-  document.body.appendChild(script);
+  const galleryGrid = document.getElementById('cloudinary-gallery-grid');
+  const galleryTabs = document.querySelectorAll('.gallery-tab');
+  
+  // Create Lightbox Modal
+  const lightbox = document.createElement('div');
+  lightbox.className = 'lightbox-modal';
+  lightbox.innerHTML = `
+    <div class="lightbox-dialog" style="position: relative; max-width: 90vw; max-height: 90vh; display: flex; align-items: center; justify-content: center;">
+      <button class="lightbox-close" style="position: absolute; top: -40px; right: 0; background: none; border: none; color: #fff; font-size: 2rem; cursor: pointer;">&times;</button>
+      <div class="lightbox-content"></div>
+    </div>
+  `;
+  document.body.appendChild(lightbox);
 
-  script.onload = () => {
-    const myGallery = cloudinary.galleryWidget({
-      container: "#cloudinary-gallery-container",
-      cloudName: "xm0awdem",
-      mediaAssets: [
-        { tag: "ecgm-gallery", mediaType: "image" },
-        { tag: "ecgm-gallery", mediaType: "video" }
-      ],
-      thumbnailProps: { width: 120, height: 120 },
-      zoom: true
-    });
-    myGallery.render();
+  const closeLightbox = () => {
+    lightbox.classList.remove('active');
+    const contentDiv = lightbox.querySelector('.lightbox-content');
+    if (contentDiv) contentDiv.innerHTML = '';
   };
+
+  const closeBtn = lightbox.querySelector('.lightbox-close');
+  if (closeBtn) closeBtn.addEventListener('click', closeLightbox);
+  
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox || e.target.classList.contains('lightbox-dialog')) closeLightbox();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeLightbox();
+  });
+
+  const loadGallery = async () => {
+    try {
+      const response = await fetch('js/gallery-data.json');
+      if (!response.ok) throw new Error('Failed to load gallery data');
+      const mediaList = await response.json();
+      renderGallery(mediaList);
+    } catch (err) {
+      console.error('Error loading gallery:', err);
+      if (galleryGrid) {
+        galleryGrid.innerHTML = `<p style="text-align: center; color: var(--blackgreen);">Unable to load media gallery at this moment.</p>`;
+      }
+    }
+  };
+
+  const renderGallery = (media) => {
+    if (!galleryGrid) return;
+    galleryGrid.innerHTML = '';
+
+    if (media.length === 0) {
+      galleryGrid.innerHTML = `<p style="text-align: center; color: var(--blackgreen);">No media assets found.</p>`;
+      return;
+    }
+
+    media.forEach(item => {
+      const card = document.createElement('div');
+      card.className = `media-card ${item.type}`;
+      card.dataset.type = item.type;
+
+      // Cloudinary optimized thumbnail URLs
+      const cloudName = 'xm0awdem';
+      const thumbUrl = item.type === 'video'
+        ? `https://res.cloudinary.com/${cloudName}/video/upload/c_fill,w_800,h_600,f_auto,q_auto/v${item.version}/${item.public_id}.jpg`
+        : `https://res.cloudinary.com/${cloudName}/image/upload/c_fill,w_800,h_600,f_auto,q_auto/v${item.version}/${item.public_id}.${item.format}`;
+
+      card.innerHTML = `
+        <img src="${thumbUrl}" class="media-card-img" alt="Gallery Media" loading="lazy">
+        <div class="media-card-overlay">
+          ${item.type === 'video' ? '<div class="media-play-icon">▶</div>' : '<div class="media-play-icon">🔍</div>'}
+        </div>
+      `;
+
+      card.addEventListener('click', () => {
+        lightbox.classList.add('active');
+        const contentDiv = lightbox.querySelector('.lightbox-content');
+        
+        if (item.type === 'video') {
+          const videoUrl = `https://res.cloudinary.com/${cloudName}/video/upload/v${item.version}/${item.public_id}.${item.format}`;
+          contentDiv.innerHTML = `<video src="${videoUrl}" controls autoplay style="max-width: 90vw; max-height: 80vh; border-radius: 8px;"></video>`;
+        } else {
+          const imgUrl = `https://res.cloudinary.com/${cloudName}/image/upload/v${item.version}/${item.public_id}.${item.format}`;
+          contentDiv.innerHTML = `<img src="${imgUrl}" alt="Lightbox Full" style="max-width: 90vw; max-height: 80vh; object-fit: contain; border-radius: 8px;">`;
+        }
+      });
+
+      galleryGrid.appendChild(card);
+    });
+  };
+
+  // Filter tabs functionality
+  galleryTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      galleryTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const filter = tab.dataset.filter;
+      
+      document.querySelectorAll('.media-card').forEach(card => {
+        if (filter === 'all' || card.classList.contains(filter)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+
+  loadGallery();
 });
