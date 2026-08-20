@@ -168,80 +168,25 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================================================
-  // 7. DYNAMIC CLOUDINARY MEDIA GALLERY
+  // 7. DYNAMIC CLOUDINARY MEDIA GALLERY (Product Gallery Widget)
   // ==========================================================================
-  const galleryGrid = document.getElementById('cloudinary-gallery-grid');
-  const galleryTabs = document.querySelectorAll('.gallery-tab');
-  const lightbox = document.createElement('div');
-  lightbox.className = 'lightbox-modal';
-  lightbox.innerHTML = `<div class="lightbox-content"></div>`;
-  document.body.appendChild(lightbox);
+  // Load Cloudinary Widget script
+  const script = document.createElement('script');
+  script.src = "https://product-gallery.cloudinary.com/all.js";
+  script.async = true;
+  document.body.appendChild(script);
 
-  const fetchMedia = async () => {
-    // Cloudinary setup: Replace 'xm0awdem' with your actual cloud name if needed
-    const cloudName = 'xm0awdem';
-    const tag = 'ecgm-gallery';
-
-    try {
-      const responses = await Promise.all([
-        fetch(`https://res.cloudinary.com/${cloudName}/image/list/${tag}.json`),
-        fetch(`https://res.cloudinary.com/${cloudName}/video/list/${tag}.json`)
-      ]);
-
-      const imagesData = responses[0].ok ? await responses[0].json() : { resources: [] };
-      const videosData = responses[1].ok ? await responses[1].json() : { resources: [] };
-
-      const images = imagesData.resources || [];
-      const videos = videosData.resources || [];
-
-      renderGallery([...images.map(i => ({...i, type: 'image'})), ...videos.map(v => ({...v, type: 'video'}))]);
-    } catch (err) {
-      console.error('Error fetching from Cloudinary:', err);
-      galleryGrid.innerHTML = `<p>Media gallery temporarily unavailable.</p>`;
-    }
-  };
-
-  const renderGallery = (media) => {
-    galleryGrid.innerHTML = '';
-    media.forEach(item => {
-      const card = document.createElement('div');
-      card.className = `media-card ${item.type}`;
-      card.dataset.type = item.type;
-      
-      const thumbUrl = item.type === 'video' 
-        ? `https://res.cloudinary.com/xm0awdem/video/upload/c_fill,w_800,h_600,f_auto,q_auto/v${item.version}/${item.public_id}.jpg`
-        : `https://res.cloudinary.com/xm0awdem/image/upload/c_fill,w_800,h_600,f_auto,q_auto/v${item.version}/${item.public_id}.${item.format}`;
-
-      card.innerHTML = `
-        <img src="${thumbUrl}" class="media-card-img" alt="Gallery Media">
-        <div class="media-card-overlay">
-          ${item.type === 'video' ? '<div class="media-play-icon">▶</div>' : ''}
-        </div>
-      `;
-
-      card.addEventListener('click', () => {
-        lightbox.classList.add('active');
-        lightbox.querySelector('.lightbox-content').innerHTML = item.type === 'video'
-          ? `<video src="https://res.cloudinary.com/xm0awdem/video/upload/v${item.version}/${item.public_id}.${item.format}" controls autoplay></video>`
-          : `<img src="https://res.cloudinary.com/xm0awdem/image/upload/v${item.version}/${item.public_id}.${item.format}" alt="Full Media">`;
-      });
-
-      galleryGrid.appendChild(card);
+  script.onload = () => {
+    const myGallery = cloudinary.galleryWidget({
+      container: "#cloudinary-gallery-container",
+      cloudName: "xm0awdem",
+      mediaAssets: [
+        { tag: "ecgm-gallery", mediaType: "all" }
+      ],
+      carouselStyle: "thumbnails",
+      thumbnailProps: { width: 120, height: 120 },
+      zoom: true
     });
+    myGallery.render();
   };
-
-  lightbox.addEventListener('click', () => lightbox.classList.remove('active'));
-
-  galleryTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      galleryTabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      const filter = tab.dataset.filter;
-      document.querySelectorAll('.media-card').forEach(card => {
-        card.style.display = (filter === 'all' || card.classList.contains(filter)) ? 'block' : 'none';
-      });
-    });
-  });
-
-  fetchMedia();
 });
