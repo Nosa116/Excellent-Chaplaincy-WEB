@@ -181,9 +181,9 @@ document.addEventListener('DOMContentLoaded', () => {
       container: "#cloudinary-gallery-container",
       cloudName: "xm0awdem",
       mediaAssets: [
-        { tag: "ecgm-gallery" }
+        { tag: "ecgm-gallery", mediaType: "image" },
+        { tag: "ecgm-gallery", mediaType: "video" }
       ],
-      carouselStyle: "thumbnails",
       thumbnailProps: { width: 120, height: 120 },
       zoom: true
     });
