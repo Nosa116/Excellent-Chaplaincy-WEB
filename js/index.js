@@ -1,4 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // SW + Cache hardening for images/videos
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  }
+  // Pre-warm Cloudinary cache for above-the-fold service cards (no-op if cached)
+  try {
+    ['https://res.cloudinary.com/xm0awdem/image/upload/c_fill,w_800,h_600,f_auto,q_auto:eco,dpr_auto/v1787171993/WhatsApp_Image_2026-08-19_at_6.19.17_PM.jpg','https://res.cloudinary.com/xm0awdem/image/upload/c_fill,w_800,h_600,f_auto,q_auto:eco,dpr_auto/v1787171987/WhatsApp_Image_2026-08-19_at_6.19.16_PM_4.jpg','https://res.cloudinary.com/xm0awdem/image/upload/c_fill,w_800,h_600,f_auto,q_auto:eco,dpr_auto/v1787171991/WhatsApp_Image_2026-08-19_at_6.19.17_PM_3.jpg'].forEach(u => { const i=new Image(); i.decoding='async'; i.src=u; });
+  } catch(e) {}
+
   // ==========================================================================
   // 1. STICKY NAVBAR & BACK-TO-TOP TRIGGER
   // ==========================================================================
@@ -463,11 +472,36 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  const GALLERY_CACHE_KEY = 'ecgm_gallery_v1';
+  const GALLERY_TTL = 1000 * 60 * 60 * 6; // 6h
   const loadGallery = async () => {
+    const tryLocal = () => {
+      try {
+        const raw = localStorage.getItem(GALLERY_CACHE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed.t || !parsed.data) return null;
+        if (Date.now() - parsed.t > GALLERY_TTL) return null;
+        return parsed.data;
+      } catch { return null; }
+    };
+    const cached = tryLocal();
+    if (cached) {
+      renderGallery(cached);
+      // revalidate in background
+      fetch('js/gallery-data.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).then(data => {
+        if (data && JSON.stringify(data) !== JSON.stringify(cached)) {
+          try { localStorage.setItem(GALLERY_CACHE_KEY, JSON.stringify({ t: Date.now(), data })); } catch {}
+          renderGallery(data);
+        }
+      }).catch(()=>{});
+      return;
+    }
     try {
       const response = await fetch('js/gallery-data.json', { cache: 'force-cache' });
       if (!response.ok) throw new Error('Failed to load gallery data');
       const mediaList = await response.json();
+      try { localStorage.setItem(GALLERY_CACHE_KEY, JSON.stringify({ t: Date.now(), data: mediaList })); } catch {}
       renderGallery(mediaList);
     } catch (err) {
       console.error('Error loading gallery:', err);
@@ -477,4 +511,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
   updateSlidesPerView();
   loadGallery();
+
+  // Testimonials slider (independent of gallery)
+  const tTrack = document.getElementById('testimonials-track');
+  const tPrev = document.getElementById('t-prev');
+  const tNext = document.getElementById('t-next');
+  const tDots = document.getElementById('t-dots');
+  const tViewport = document.querySelector('.testimonials-viewport');
+  let tIndex = 0;
+  let tPerView = 2;
+  const tUpdatePerView = () => { tPerView = window.matchMedia('(max-width: 991px)').matches ? 1 : 2; };
+  const tMax = () => Math.max(0, (tTrack ? tTrack.children.length : 0) - tPerView);
+  const tBuildDots = () => {
+    if (!tDots || !tTrack) return;
+    tDots.innerHTML = '';
+    for (let i=0;i<=tMax();i++) {
+      const d=document.createElement('button'); d.className='gallery-dot'+(i===tIndex?' active':''); d.setAttribute('aria-label',`Testimonial page ${i+1}`);
+      d.addEventListener('click', ()=>{ tIndex=i; tUpdate(); tRestart(); }); tDots.appendChild(d);
+    }
+  };
+  const tUpdate = (smooth=true) => {
+    if (!tTrack || !tViewport) return;
+    tUpdatePerView();
+    const gap=24; const vw=tViewport.clientWidth; const cardW=(vw - gap*(tPerView-1))/tPerView;
+    tTrack.style.transition=smooth?'':'none'; tTrack.style.transform=`translateX(-${tIndex*(cardW+gap)}px)`;
+    if (tDots) [...tDots.children].forEach((d,i)=>d.classList.toggle('active', i===tIndex));
+    if (tPrev) tPrev.disabled = tIndex===0; if (tNext) tNext.disabled = tIndex>=tMax();
+  };
+  let tTimer=null; const tStart=()=>{ tStop(); if (tTrack && tTrack.children.length>tPerView) tTimer=setInterval(()=>{ tIndex = tIndex>=tMax()?0:tIndex+1; tUpdate(); }, 5000); }; const tStop=()=>{ if(tTimer) clearInterval(tTimer); tTimer=null; }; const tRestart=()=>{ tStop(); tStart(); };
+  if (tPrev) tPrev.addEventListener('click', ()=>{ tIndex=tIndex<=0?tMax():tIndex-1; tUpdate(); tRestart(); });
+  if (tNext) tNext.addEventListener('click', ()=>{ tIndex=tIndex>=tMax()?0:tIndex+1; tUpdate(); tRestart(); });
+  let tSX=0, tDX=0;
+  if (tViewport) {
+    tViewport.addEventListener('touchstart', e=>{ tSX=e.touches[0].clientX; tStop(); }, {passive:true});
+    tViewport.addEventListener('touchmove', e=>{ tDX=e.touches[0].clientX - tSX; }, {passive:true});
+    tViewport.addEventListener('touchend', ()=>{ if(Math.abs(tDX)>50){ if(tDX<0) tIndex=tIndex>=tMax()?0:tIndex+1; else tIndex=tIndex<=0?tMax():tIndex-1; tUpdate(); } tDX=0; tStart(); });
+    tViewport.addEventListener('mouseenter', tStop); tViewport.addEventListener('mouseleave', tStart);
+  }
+  window.addEventListener('resize', ()=>{ tUpdatePerView(); tBuildDots(); tUpdate(false); });
+  tUpdatePerView(); tBuildDots(); tUpdate(false); tStart();
 });
