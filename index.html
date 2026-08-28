@@ -13,6 +13,12 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="assets/logo.png">
   
+  <!-- Performance: early connections for fonts + Cloudinary -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
+  <link rel="dns-prefetch" href="https://res.cloudinary.com">
+
   <!-- CSS Stylesheet -->
   <link rel="stylesheet" href="css/index.css">
 </head>
@@ -24,7 +30,7 @@
   <header class="header">
     <div class="container nav">
       <a href="#hero" class="logo-container">
-        <img src="assets/logo.png" alt="ECGM Logo" class="logo-img">
+        <img src="assets/logo.png" alt="ECGM Logo" class="logo-img" width="50" height="50" loading="eager" decoding="async" fetchpriority="high">
         <div>
           <span class="logo-text">ECGM</span>
           <span class="logo-sub">Excellent Chaplaincy</span>
@@ -94,7 +100,7 @@
       
       <div class="hero-image-wrapper slide-in-right">
         <div class="hero-image-container">
-          <img src="assets/logo.png" alt="Excellent Chaplaincy Global Mission Crest" class="hero-logo-large">
+          <img src="assets/logo.png" alt="Excellent Chaplaincy Global Mission Crest" class="hero-logo-large" width="520" height="520" loading="eager" decoding="async" fetchpriority="high">
         </div>
       </div>
     </div>
@@ -198,7 +204,7 @@
       <div class="gallery-grid">
         <!-- Card 1: Clinical & Care -->
         <div class="gallery-card animate-on-scroll delay-1" onclick="document.location.hash='#contact';">
-          <div class="gallery-card-img" style="background-image: url('assets/clinical_chaplaincy.jpg');"></div>
+          <img src="assets/clinical_chaplaincy.jpg" alt="Clinical and care chaplaincy" class="gallery-card-img" width="800" height="540" loading="lazy" decoding="async">
           <div class="gallery-card-overlay"></div>
           <div class="gallery-card-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -210,7 +216,7 @@
 
         <!-- Card 2: Military & Defense -->
         <div class="gallery-card animate-on-scroll delay-2" onclick="document.location.hash='#contact';">
-          <div class="gallery-card-img" style="background-image: url('assets/military_chaplaincy.jpg');"></div>
+          <img src="assets/military_chaplaincy.jpg" alt="Military and defense chaplaincy" class="gallery-card-img" width="800" height="540" loading="lazy" decoding="async">
           <div class="gallery-card-overlay"></div>
           <div class="gallery-card-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -222,7 +228,7 @@
 
         <!-- Card 3: Community & Corporate -->
         <div class="gallery-card animate-on-scroll delay-3" onclick="document.location.hash='#contact';">
-          <div class="gallery-card-img" style="background-image: url('assets/corporate_chaplaincy.jpg');"></div>
+          <img src="assets/corporate_chaplaincy.jpg" alt="Community and corporate chaplaincy" class="gallery-card-img" width="800" height="540" loading="lazy" decoding="async">
           <div class="gallery-card-overlay"></div>
           <div class="gallery-card-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -265,13 +271,21 @@
         </div>
       </div>
 
-      <!-- Dynamic Grid Container -->
-      <div id="cloudinary-gallery-grid" class="media-gallery-grid animate-on-scroll delay-2">
-        <div class="gallery-loader">
-          <div class="spinner"></div>
-          <p>Loading gallery items...</p>
-        </div>
+      <!-- Slider Container (replaces static grid) -->
+      <div id="gallery-loader" class="gallery-loader animate-on-scroll delay-2">
+        <div class="spinner"></div>
+        <p>Loading gallery items...</p>
       </div>
+
+      <div id="gallery-slider" class="gallery-slider animate-on-scroll delay-2" hidden>
+        <button class="slider-btn slider-btn-prev" type="button" aria-label="Previous slide">&#10094;</button>
+        <div class="gallery-slider-viewport">
+          <div id="cloudinary-gallery-grid" class="media-gallery-track" role="list"></div>
+        </div>
+        <button class="slider-btn slider-btn-next" type="button" aria-label="Next slide">&#10095;</button>
+      </div>
+      <div id="gallery-dots" class="gallery-dots" role="tablist" aria-label="Gallery pagination"></div>
+      <p id="gallery-empty" class="gallery-empty" hidden>No media assets found.</p>
     </div>
   </section>
 
@@ -582,7 +596,7 @@
       <!-- Brand Column -->
       <div class="footer-brand">
         <div class="footer-logo-container">
-          <img src="assets/logo.png" alt="ECGM Crest" class="footer-logo-img">
+          <img src="assets/logo.png" alt="ECGM Crest" class="footer-logo-img" width="48" height="48" loading="lazy" decoding="async">
           <div>
             <span class="footer-logo-text">ECGM</span>
             <span class="footer-logo-sub">Excellent Chaplaincy Global Mission</span>
