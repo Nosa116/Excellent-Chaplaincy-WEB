@@ -512,42 +512,230 @@ document.addEventListener('DOMContentLoaded', () => {
   updateSlidesPerView();
   loadGallery();
 
-  // Testimonials slider (independent of gallery)
-  const tTrack = document.getElementById('testimonials-track');
-  const tPrev = document.getElementById('t-prev');
-  const tNext = document.getElementById('t-next');
-  const tDots = document.getElementById('t-dots');
-  const tViewport = document.querySelector('.testimonials-viewport');
-  let tIndex = 0;
-  let tPerView = 2;
-  const tUpdatePerView = () => { tPerView = window.matchMedia('(max-width: 991px)').matches ? 1 : 2; };
-  const tMax = () => Math.max(0, (tTrack ? tTrack.children.length : 0) - tPerView);
-  const tBuildDots = () => {
-    if (!tDots || !tTrack) return;
-    tDots.innerHTML = '';
-    for (let i=0;i<=tMax();i++) {
-      const d=document.createElement('button'); d.className='gallery-dot'+(i===tIndex?' active':''); d.setAttribute('aria-label',`Testimonial page ${i+1}`);
-      d.addEventListener('click', ()=>{ tIndex=i; tUpdate(); tRestart(); }); tDots.appendChild(d);
+  // ==========================================================================
+  // 8. IMPACT REPORTS & BLOG SECTION INTERACTIVE READER MODAL
+  // ==========================================================================
+  const blogReportsData = {
+    'report-1': {
+      tag: 'Milestone Event • Chapel & Medical Outreach',
+      title: 'CPFN IGANDO UNIT SUCCESS STORY: 3-in-1 Milestone Events',
+      date: 'April 18, 2026',
+      readTime: '3 min read',
+      authorName: 'Chpl. Amb. Dr. J.O. Fabunmi',
+      authorRole: 'ECGM Mission Command & Founder',
+      authorInitials: 'JF',
+      heroImg: 'https://res.cloudinary.com/xm0awdem/image/upload/c_fill,w_1000,h_550,f_auto,q_auto:eco/v1787171984/WhatsApp_Image_2026-08-19_at_6.19.15_PM.jpg',
+      contentHtml: `
+        <p class="modal-lead-p">Glory be to God. Today April 18th, 2026 is a remarkable day for <strong>3 in 1 events</strong>:</p>
+
+        <div class="modal-milestones-box">
+          <div class="modal-milestones-title">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" style="color:var(--original);"><path fill="currentColor" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <span>Core Event Milestones:</span>
+          </div>
+          <ul class="modal-milestones-list">
+            <li>
+              <span class="modal-num-badge">1</span>
+              <div><strong>Official visitation of Lagos State Police command Chaplain</strong> — OUR Visitor.</div>
+            </li>
+            <li>
+              <span class="modal-num-badge">2</span>
+              <div><strong>Dedication of CPFN Praise Chapel</strong> at Igando Divisional Police Headquarters.</div>
+            </li>
+            <li>
+              <span class="modal-num-badge">3</span>
+              <div><strong>Free Medical Outreach</strong> to Igando Divisional Police Hqts personnels and their families.</div>
+            </li>
+          </ul>
+        </div>
+
+        <p class="modal-p">We were honoured to see Our fellow military Chaplains from <strong>Ojo Army Cantonment Chaplains</strong>, <strong>Regnum gallant Chaplains</strong>, <strong>Igando PCRC members</strong>, fellow <strong>Police pastors</strong>, <strong>police Chaplains</strong>, and well wishers that graced the occasion.</p>
+
+        <div class="modal-quote-box">
+          <div class="modal-quote-title">Special Police Leadership Commendation</div>
+          <div class="modal-quote-item">
+            <p class="modal-quote-text">“Kudos to our amiable, astute and gallant DPO in person of CSP. Amori Fatai for his love for the things of God.”</p>
+          </div>
+        </div>
+
+        <p class="modal-p">This Success story will not be completed without mentioning <strong>Able God Foundation members</strong> &amp; <strong>Excellent Chaplaincy Global Missions members</strong> for their undaunted vision and relentless burden for humanity, government, community, military, hospitals, schools, correctional centers services to mention but few.</p>
+      `,
+      signoff: 'Thank you all. From Chpl. Amb. Dr. J.O. Fabunmi.'
+    },
+
+    'report-2': {
+      tag: 'Anniversary Outreach • Highway Corridor Mission',
+      title: 'REPORT FROM POLICE - EXCELLENT CHAPLAINS UNIT, IGANDO DIV. POLICE HQTS, IGANDO',
+      date: 'June 24, 2026',
+      readTime: '4 min read',
+      authorName: 'Police - Excellent Chaplains Unit',
+      authorRole: 'Igando Div. Police Hqts, Lagos Command',
+      authorInitials: 'PC',
+      heroImg: 'https://res.cloudinary.com/xm0awdem/image/upload/c_fill,w_1000,h_550,f_auto,q_auto:eco/v1787171982/WhatsApp_Image_2026-08-19_at_6.19.15_PM_1.jpg',
+      contentHtml: `
+        <p class="modal-lead-p">Praise the Lord! The Nigeria Police Chaplaincy Service 20th Years Anniversary mobile outreach took place today Wednesday 24th, June 2026 in grand style at exactly 10:00am from CPFN Igando Divisional Police Hqts, Igando.</p>
+
+        <div class="modal-milestones-box">
+          <div class="modal-milestones-title">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" style="color:var(--original);"><path fill="currentColor" d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.04 3H5.81l1.04-3zM19 17H5v-4.66l.12-.34h13.77l.11.34V17z"/></svg>
+            <span>Outreach Logistics &amp; Deployment Convoy:</span>
+          </div>
+          <p class="modal-p" style="margin-bottom:0.75rem;">We hired an <strong>eighteen passenger bus</strong> together with a <strong>bus car</strong> occupied by Excellent Chaplains, Two senior Police personnels, Professional photo graphers, and Two prints Media journalists.</p>
+          <p class="modal-p" style="margin-bottom:0;"><strong>Provision of Incentives:</strong> Bottled water, Soft drinks, Fruit drinks, Cracker biscuits snacks, and sizeable face towels among other welfare provisions were made available.</p>
+        </div>
+
+        <div class="modal-route-box">
+          <strong style="color:var(--blackgreen); font-size:0.95rem; display:block; margin-bottom:0.4rem;">Mobile Outreach Corridor Route:</strong>
+          <div class="modal-route-flow">
+            <span class="modal-route-step">CPFN Igando Div. HQ</span>
+            <span class="modal-route-arrow">➔</span>
+            <span class="modal-route-step">Idimu Police Checkpoints</span>
+            <span class="modal-route-arrow">➔</span>
+            <span class="modal-route-step">Igando Checkpoints</span>
+            <span class="modal-route-arrow">➔</span>
+            <span class="modal-route-step">Iba Checkpoint</span>
+            <span class="modal-route-arrow">➔</span>
+            <span class="modal-route-step">Iyana Ira Checkpoints</span>
+            <span class="modal-route-arrow">➔</span>
+            <span class="modal-route-step">Agbara Roundabout</span>
+          </div>
+        </div>
+
+        <p class="modal-p">To God be the glory, the exercise was tremendously inspiring, robust, and acceptable with appreciation from all the beneficiaries across our law enforcement, security, and traffic agencies.</p>
+
+        <div class="modal-chips-section">
+          <div class="modal-chips-title">Cross-Agency Beneficiaries Reached:</div>
+          <div class="modal-chips-wrap">
+            <span class="modal-chip">🛡️ Nigeria Police Personnel</span>
+            <span class="modal-chip">🚗 FRSC Road Safety Officers</span>
+            <span class="modal-chip">🚦 LASTMA Officers</span>
+            <span class="modal-chip">📋 VIO Officers</span>
+            <span class="modal-chip">🎖️ Military / Soldiers</span>
+            <span class="modal-chip">🛂 Nigeria Immigration Service</span>
+            <span class="modal-chip">⚖️ NDLEA Officers</span>
+            <span class="modal-chip">📦 Nigeria Customs Officers</span>
+          </div>
+        </div>
+
+        <div class="modal-quote-box">
+          <div class="modal-quote-title">Direct Testimonials From The Field</div>
+          <div class="modal-quote-item">
+            <p class="modal-quote-text">“All our audience enjoyed our introduction / motives of encouragement, recognition and prayers.”</p>
+          </div>
+          <div class="modal-quote-item">
+            <p class="modal-quote-text">“All were served accordingly with incentive package 📦”</p>
+          </div>
+          <div class="modal-quote-item">
+            <p class="modal-quote-text">“The officers including our Police personnels confessed that this is the first experience of this kind of mobile outreach since they join The Nigeria Police Force.”</p>
+          </div>
+        </div>
+
+        <p class="modal-p">More than <strong>250 pictures</strong> are available with few video clips. Featured media coverage is being prepared alongside national print media reports for wider publicity and awareness of the good gestures by The Nigeria Police Chaplaincy Service.</p>
+      `,
+      signoff: 'From Police - Excellent Chaplains Unit, Igando Divisional Police Hqts, Lagos Command.'
     }
   };
-  const tUpdate = (smooth=true) => {
-    if (!tTrack || !tViewport) return;
-    tUpdatePerView();
-    const gap=24; const vw=tViewport.clientWidth; const cardW=(vw - gap*(tPerView-1))/tPerView;
-    tTrack.style.transition=smooth?'':'none'; tTrack.style.transform=`translateX(-${tIndex*(cardW+gap)}px)`;
-    if (tDots) [...tDots.children].forEach((d,i)=>d.classList.toggle('active', i===tIndex));
-    if (tPrev) tPrev.disabled = tIndex===0; if (tNext) tNext.disabled = tIndex>=tMax();
+
+  const blogModal = document.getElementById('blog-reader-modal');
+  const blogModalBackdrop = document.getElementById('blog-modal-backdrop');
+  const blogModalClose = document.getElementById('blog-modal-close');
+  const blogModalContent = document.getElementById('blog-modal-content');
+  const blogCards = document.querySelectorAll('.blog-card');
+  const blogReadBtns = document.querySelectorAll('.blog-read-btn');
+
+  const openBlogReport = (reportId) => {
+    const report = blogReportsData[reportId];
+    if (!report || !blogModal || !blogModalContent) return;
+
+    blogModalContent.innerHTML = `
+      <span class="modal-header-tag">${report.tag}</span>
+      <h2 class="modal-header-title">${report.title}</h2>
+      
+      <div class="modal-header-meta">
+        <span class="blog-date">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/></svg>
+          ${report.date}
+        </span>
+        <span class="blog-read-time">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"/></svg>
+          ${report.readTime}
+        </span>
+        <span>•</span>
+        <span>${report.authorName}</span>
+      </div>
+
+      <img src="${report.heroImg}" alt="${report.title}" class="modal-hero-img" loading="eager" decoding="async">
+
+      <div class="modal-article-body">
+        ${report.contentHtml}
+      </div>
+
+      <div class="modal-author-signoff">
+        <div class="modal-author-block">
+          <div class="modal-author-avatar-lg">${report.authorInitials}</div>
+          <div class="modal-author-details">
+            <strong>${report.authorName}</strong>
+            <span>${report.authorRole}</span>
+          </div>
+        </div>
+        <p style="font-weight:600; color:var(--original); margin:0;">${report.signoff}</p>
+      </div>
+    `;
+
+    blogModal.classList.add('active');
+    blogModal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+
+    // Focus close button for accessibility
+    if (blogModalClose) blogModalClose.focus();
   };
-  let tTimer=null; const tStart=()=>{ tStop(); if (tTrack && tTrack.children.length>tPerView) tTimer=setInterval(()=>{ tIndex = tIndex>=tMax()?0:tIndex+1; tUpdate(); }, 5000); }; const tStop=()=>{ if(tTimer) clearInterval(tTimer); tTimer=null; }; const tRestart=()=>{ tStop(); tStart(); };
-  if (tPrev) tPrev.addEventListener('click', ()=>{ tIndex=tIndex<=0?tMax():tIndex-1; tUpdate(); tRestart(); });
-  if (tNext) tNext.addEventListener('click', ()=>{ tIndex=tIndex>=tMax()?0:tIndex+1; tUpdate(); tRestart(); });
-  let tSX=0, tDX=0;
-  if (tViewport) {
-    tViewport.addEventListener('touchstart', e=>{ tSX=e.touches[0].clientX; tStop(); }, {passive:true});
-    tViewport.addEventListener('touchmove', e=>{ tDX=e.touches[0].clientX - tSX; }, {passive:true});
-    tViewport.addEventListener('touchend', ()=>{ if(Math.abs(tDX)>50){ if(tDX<0) tIndex=tIndex>=tMax()?0:tIndex+1; else tIndex=tIndex<=0?tMax():tIndex-1; tUpdate(); } tDX=0; tStart(); });
-    tViewport.addEventListener('mouseenter', tStop); tViewport.addEventListener('mouseleave', tStart);
+
+  const closeBlogReport = () => {
+    if (!blogModal) return;
+    blogModal.classList.remove('active');
+    blogModal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  };
+
+  if (blogReadBtns) {
+    blogReadBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const targetId = btn.dataset.target;
+        openBlogReport(targetId);
+      });
+    });
   }
-  window.addEventListener('resize', ()=>{ tUpdatePerView(); tBuildDots(); tUpdate(false); });
-  tUpdatePerView(); tBuildDots(); tUpdate(false); tStart();
+
+  if (blogCards) {
+    blogCards.forEach(card => {
+      card.addEventListener('click', (e) => {
+        // If clicking a link or button directly inside, let it handle
+        if (e.target.closest('a')) return;
+        const targetId = card.dataset.postId;
+        openBlogReport(targetId);
+      });
+    });
+  }
+
+  if (blogModalClose) {
+    blogModalClose.addEventListener('click', closeBlogReport);
+  }
+
+  if (blogModalBackdrop) {
+    blogModalBackdrop.addEventListener('click', closeBlogReport);
+  }
+
+  blogModal?.addEventListener('click', (e) => {
+    if (e.target === blogModal) {
+      closeBlogReport();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && blogModal && blogModal.classList.contains('active')) {
+      closeBlogReport();
+    }
+  });
 });
+

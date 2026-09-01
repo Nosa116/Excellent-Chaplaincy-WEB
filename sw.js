@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ecgm-v1';
+const CACHE_NAME = 'ecgm-v3';
 const STATIC_ASSETS = [
   './',
   './index.html',
